@@ -17,7 +17,7 @@ public class DiaryCreationService implements DiaryCreationUsecase {
 
   @Override
   public DiaryCreatedResponse createDiary(DiaryRequest request) {
-    DiaryDomainInfo diaryDomainInfo = diaryCommandService.createDiary(request.content());
+    DiaryDomainInfo diaryDomainInfo = diaryCommandService.createDiary(request.content(), request.date());
     return DiaryMapper.toDiaryCreatedResponse(diaryDomainInfo);
   }
 }

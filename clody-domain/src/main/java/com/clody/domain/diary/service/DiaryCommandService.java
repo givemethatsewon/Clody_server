@@ -34,13 +34,14 @@ public class DiaryCommandService {
 
   private final DiaryStrategyManager strategyManager;
 
-  public DiaryDomainInfo createDiary(List<String> diaryContents) {
+  public DiaryDomainInfo createDiary(List<String> diaryContents, String date) {
     Long userId = JwtUtil.getLoginMemberId();
     User user = userRepository.findById(userId);
-    LocalDate today = LocalDate.now();
 
-    LocalDateTime startOfDay = today.atStartOfDay();
-    LocalDateTime endOfDay = today.atTime(23, 59, 59, 999999999);
+    LocalDate parsedDate = LocalDate.parse(date);
+
+    LocalDateTime startOfDay = parsedDate.atStartOfDay();
+    LocalDateTime endOfDay = parsedDate.atTime(23, 59, 59, 999999999);
 
     // isDeleted 가 true 인 일기가 있으면
     List<Diary> unDeletedDiaries = diaryRepository.findDiariesByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay).stream()
@@ -50,7 +51,7 @@ public class DiaryCommandService {
       throw new DiaryCreateException(ErrorType.EXCESS_DIARY_CREATE);
     }
 
-    List<Diary> diaryList = Diary.createDiaryList(user, diaryContents);
+    List<Diary> diaryList = Diary.createDiaryList(user, diaryContents, parsedDate );
 
     List<Diary> savedDiaryList = diaryRepository.saveAll(diaryList);
     //각 event 프로세서에 이벤트 전파

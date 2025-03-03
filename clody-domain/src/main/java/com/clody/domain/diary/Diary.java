@@ -62,31 +62,22 @@ public class Diary {
     this.containsProfanity = containsProfanity;
   }
 
-  public static Diary createDiary(User user, String content, boolean containsProfanity) {
+  public static Diary createDiaryWithDate(User user, String content, boolean containsProfanity,
+      LocalDate date) {
     return Diary.builder()
         .user(user)
         .content(content)
         .isDeleted(false)
-        .createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now())
+        .createdAt(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
+        .updatedAt(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
         .containsProfanity(containsProfanity)
         .build();
   }
 
-  public void deleteDiary() {
-    if(!this.checkDiaryDeleted()){
-      this.isDeleted = true;
-    }
-  }
-
-  public boolean checkDiaryDeleted() {
-    return this.isDeleted;
-  }
-
-  public static List<Diary> createDiaryList(User user, List<String> contents) {
+  public static List<Diary> createDiaryList(User user, List<String> contents, LocalDate date) {
     boolean containsProfanity = checkProfanity(contents);
     return contents.stream()
-        .map(content -> createDiary(user, content, containsProfanity))
+        .map(content -> createDiaryWithDate(user, content, containsProfanity, date))
         .collect(Collectors.toUnmodifiableList());
   }
 
@@ -95,13 +86,23 @@ public class Diary {
     return contents.stream().anyMatch(filter::check);
   }
 
-  public boolean matches(LocalDate localDate, Long userId){
-    return this.createdAt.toLocalDate().equals(localDate) && this.user.getId().equals(userId);
-  }
-
   public static Diary getLatestDiary(List<Diary> diaries) {
     return diaries.stream()
         .max(Comparator.comparing(Diary::getCreatedAt))
         .orElseThrow(() -> new NotFoundException(ErrorType.DIARY_MESSAGE_NOT_FOUND));
+  }
+
+  public void deleteDiary() {
+    if (!this.checkDiaryDeleted()) {
+      this.isDeleted = true;
+    }
+  }
+
+  public boolean checkDiaryDeleted() {
+    return this.isDeleted;
+  }
+
+  public boolean matches(LocalDate localDate, Long userId) {
+    return this.createdAt.toLocalDate().equals(localDate) && this.user.getId().equals(userId);
   }
 }
