@@ -29,7 +29,7 @@ public class DiaryQueryService {
   private final DiaryRepository diaryRepository;
   private final ReplyRepository replyRepository;
 
-  public DiaryCreatedInfo getCreatedTime(DiaryDateInfo info) {
+  public DiaryCreatedInfo getCreatedDateTime(DiaryDateInfo info) {
 
     Long userId = JwtUtil.getLoginMemberId();
     LocalDateTime localDateTime = info.parseToLocalDateTime();

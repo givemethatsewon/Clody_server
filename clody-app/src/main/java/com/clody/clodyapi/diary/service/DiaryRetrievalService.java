@@ -21,7 +21,7 @@ public class DiaryRetrievalService implements DiaryQueryUsecase {
   @Override
   public DiaryCreatedTimeResponse getCreatedTime(int year, int month, int date) {
     DiaryDateInfo diaryDateInfo = DiaryMapper.toDiaryDateInfo(year, month, date);
-    DiaryCreatedInfo diaryCreatedInfo = diaryQueryService.getCreatedTime(diaryDateInfo);
+    DiaryCreatedInfo diaryCreatedInfo = diaryQueryService.getCreatedDateTime(diaryDateInfo);
 
     return DiaryMapper.toDiaryCreatedTimeResponse(diaryCreatedInfo);
   }
