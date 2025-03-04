@@ -33,10 +33,11 @@ public class DiaryQueryService {
 
     Long userId = JwtUtil.getLoginMemberId();
     LocalDateTime localDateTime = info.parseToLocalDateTime();
+
     List<Diary> diaryList = diaryRepository.findTodayDiary(localDateTime);
     Diary latestDiary = Diary.getLatestDiary(diaryList);
     Reply reply = replyRepository.findByUserIdAndDiaryCreatedDate(userId, localDateTime.toLocalDate());
-    return DiaryCreatedInfo.from(latestDiary.getCreatedAt(),reply.checkIfFirstReply());
+    return DiaryCreatedInfo.from(latestDiary.getUpdatedAt(),reply.checkIfFirstReply());
   }
 
   public List<DiaryContent> getDiary(DiaryDateInfo info) {

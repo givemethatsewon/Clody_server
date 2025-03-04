@@ -69,7 +69,7 @@ public class Diary {
         .content(content)
         .isDeleted(false)
         .createdAt(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
-        .updatedAt(LocalDateTime.of(date, LocalDateTime.now().toLocalTime()))
+        .updatedAt(LocalDateTime.now())
         .containsProfanity(containsProfanity)
         .build();
   }
