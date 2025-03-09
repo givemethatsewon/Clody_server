@@ -27,15 +27,19 @@
 ## Contributors
 <table>
   <tr>
-    <td align="center"><img src="https://github.com/user-attachments/assets/924f39bc-62c1-4ac6-8659-c01188b22564" width="250" /></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/6bbb2cfe-13c9-4c95-8caf-64205dc4cfce" width="250" /></td>
-    <td align="center"><img src="https://github.com/user-attachments/assets/e3b4a502-c735-41a6-afe9-2ddc1b4f4be9" width="250" /></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/1cf9e606-b5da-4eb2-a7ba-a425c0bed2be" width="250" /></td>
+
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/hyukjinKimm"> 김혁진</a></td>
-    <td align="center"><a href="https://github.com/hyunw9">👑강현욱</a></td>
-    <td align="center"><a href="https://github.com/Yangdaehan">양대한</a></td>
+    <td align="center"><a href="https://github.com/hyunw9">강현욱</a></td>
+    <td align="center"><a href="https://github.com/Yangdaehan">민세원</a></td>
   </tr>
+<tr>
+  <td align="center">Maintainer, BE</td>
+  <td align="center">BE</td>
+</tr>
+
  
 </table>
 
