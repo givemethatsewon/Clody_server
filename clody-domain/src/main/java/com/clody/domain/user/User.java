@@ -17,6 +17,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
@@ -90,4 +92,16 @@ public class User extends BaseEntity {
     }
 
   }
+
+  // 기존 User 클래스 내부에 메서드 추가
+  public static User createSimpleUser(String email, String name) {
+    return User.builder()
+            .platformID(UUID.randomUUID().toString()) // 랜덤 ID 생성
+            .platform(Platform.KAKAO)
+            .email(email)
+            .nickName(name)
+            .is_deleted(false)
+            .build();
+  }
+
 }

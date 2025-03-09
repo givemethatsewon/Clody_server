@@ -1,5 +1,6 @@
 package com.clody.clodyapi.user.controller;
 
+import com.clody.clodyapi.user.controller.dto.request.SimpleSignUpRequest;
 import com.clody.clodyapi.user.controller.dto.request.UserSignInRequest;
 import com.clody.clodyapi.user.controller.dto.request.UserSignUpRequest;
 import com.clody.clodyapi.user.controller.dto.response.TokenReissueResponse;
@@ -55,4 +56,16 @@ public class UserAuthControllerImpl implements AuthController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(ApiResponse.success(SuccessType.OK_SUCCESS, response));
   }
+/**
+ * 로컬 DB 테스트 유저 생성용 API. prod 머지 전 주석 처리 필수
+ *
+ * @param request the sign-up request containing user details
+ * @return a response entity containing the user authentication response
+ */
+//  @PostMapping("/auth/simple/signup")
+//  public ResponseEntity<ApiResponse<UserAuthResponse>> simpleSignUp(
+//          @RequestBody final SimpleSignUpRequest request) {
+//    final UserAuthResponse response = userApplicationService.simpleSignUp(request);
+//    return ResponseEntity.status(HttpStatus.CREATED)
+//            .body(ApiResponse.success(SuccessType.CREATED_SUCCESS, response));
 }

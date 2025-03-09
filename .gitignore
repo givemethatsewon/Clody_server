@@ -83,6 +83,6 @@ replay_pid*
 *.bin
 *.probe
 /clody-batch/build
+/init-db.sql
 
 docker-compose.yml
-init-db.sql

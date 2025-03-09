@@ -60,7 +60,8 @@ public interface DiaryController {
     ResponseEntity<ApiResponse<DiaryCreatedTimeResponse>> getDiaryCreatedTime(
         @RequestParam @Parameter(name = "연도", description = "조회할 연도", required = true) final int year,
         @RequestParam @Parameter(name = "달", description = "조회할 달", required = true) final int month,
-        @RequestParam @Parameter(name = "일", description = "조회할 일", required = true) final int date
+        @RequestParam @Parameter(name = "일", description = "조회할 일", required = true) final int date,
+        @RequestParam(required = false) @Parameter(name = "adWatched", description = "광고 시청 여부", required = false) final Boolean adWatched
     );
 
     @Operation(summary = "일기 삭제 ", description = "년/월/일을 이용하여 일기와 답변까지 삭제합니다. 만약 답변이 요청 중인 상태라면, 답변을 요청하지 않습니다.")

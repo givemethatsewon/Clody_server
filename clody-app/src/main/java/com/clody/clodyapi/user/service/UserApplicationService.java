@@ -3,6 +3,7 @@ package com.clody.clodyapi.user.service;
 import static com.clody.support.constants.JwtConstants.REFRESH_TOKEN_EXPIRATION_TIME;
 
 import com.clody.clodyapi.alarm.service.AlarmUpdateService;
+import com.clody.clodyapi.user.controller.dto.request.SimpleSignUpRequest;
 import com.clody.clodyapi.user.controller.dto.request.UserSignInRequest;
 import com.clody.clodyapi.user.controller.dto.request.UserSignUpRequest;
 import com.clody.clodyapi.user.controller.dto.response.TokenReissueResponse;
@@ -103,5 +104,20 @@ public class UserApplicationService implements UserAuthUsecase {
   public void storeRefreshToken(Long id, String refreshToken) {
     refreshTokenRepository.saveRefreshToken(id, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME);
   }
+
+
+  public UserAuthResponse simpleSignUp(SimpleSignUpRequest request) {
+    User newUser = User.createSimpleUser(request.email(), request.name());
+    User savedUser = userAuthService.registerUser(newUser);
+    Token token = issueToken(savedUser.getId());
+
+    // FCM 토큰 설정 (있는 경우)
+    if (request.fcmToken() != null && !request.fcmToken().isEmpty()) {
+      alarmUpdateService.updateFcmToken(savedUser.getId(), request.fcmToken());
+    }
+
+    return UserAuthResponse.of(savedUser.getId(), token.accessToken(), token.refreshToken());
+  }
+
 
 }

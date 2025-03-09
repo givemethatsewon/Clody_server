@@ -10,7 +10,8 @@ public enum Platform {
 
     KAKAO("kakao"),
     GOOGLE("google"),
-    APPLE("apple");
+    APPLE("apple"),
+    LOCAL("local");
 
     private final String name;
 

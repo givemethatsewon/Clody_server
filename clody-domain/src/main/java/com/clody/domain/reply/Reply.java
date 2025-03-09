@@ -41,6 +41,9 @@ public class Reply extends BaseEntity {
   @Column(name = "is_read")
   private Boolean is_read;
 
+  @Column(name = "is_from_ad", nullable = false)
+  private Boolean isFromAd = false;
+
   @Column(name = "diary_created_date")
   private LocalDate diaryCreatedDate;
 
@@ -143,4 +146,13 @@ public class Reply extends BaseEntity {
   public boolean checkIfFirstReply() {
     return this.replyType == ReplyType.FIRST;
   }
+
+  public void updateStatusToSUCCEED() {
+    this.replyInfo = replyInfo.update(this.replyInfo.getVersion(), ReplyProcessStatus.SUCCEED);
+  }
+
+  public void updateIsFromAdToTrue() {
+    this.isFromAd = true;
+  }
+
 }

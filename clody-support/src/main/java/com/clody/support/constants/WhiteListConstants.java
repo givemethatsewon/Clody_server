@@ -7,7 +7,8 @@ public class WhiteListConstants {
     public static final List<String> FILTER_WHITE_LIST = List.of(
             "/api/v1/auth/signup",
             "/api/v1/auth/signin",
-            "/api/v1/auth/reissue"
+            "/api/v1/auth/reissue",
+            "/api/v1/auth/simple/signup"
 //            "/api/v1/auth/redirect"
     );
 
@@ -16,6 +17,7 @@ public class WhiteListConstants {
             "/api/v1/auth/signin",
             "/api/v1/auth/reissue",
             "/api/v1/auth/redirect",
+            "/api/v1/auth/simple/signup", // 추가
             "/test/api/v1/auth/redirect",
             "/favicon.ico",
             "/actuator/**",
