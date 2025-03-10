@@ -21,19 +21,21 @@ import com.clody.domain.reply.service.RodyProcessor;
 import com.clody.support.dto.type.ErrorType;
 import com.clody.support.exception.BusinessException;
 import com.clody.support.security.util.JwtUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DiaryRetrievalService implements DiaryQueryUsecase {
 
-  private final DiaryQueryService diaryQueryService;
-  private final ReplyRepository replyRepository;
-  private final RodyProcessor rodyProcessor;
+    private final DiaryQueryService diaryQueryService;
+    private final ReplyRepository replyRepository;
+    private final RodyProcessor rodyProcessor;
+    private final EntityManager entityManager;
 
 
   @Override
@@ -72,25 +74,39 @@ public class DiaryRetrievalService implements DiaryQueryUsecase {
       Reply reply = replyRepository.findByUserIdAndDiaryCreatedDate(
               JwtUtil.getLoginMemberId(), diaryDate);
 
-      // 이미 답변이 있는 경우 처리하지 않음
-      if (reply.getContent() != null && reply.getReplyInfo().checkReadable()) {
-        return;
-      }
-      // 즉시 답변 생성 및 처리
-      DequeuedMessage message = createImmediateReplyMessage(reply);
-      rodyProcessor.createReply(message);
+            // 이미 답변이 있는 경우 처리하지 않음
+            if (reply.getContent() != null && reply.getReplyInfo().checkReadable()) {
+                return;
+            }
 
-      // 답변 상태를 SUCCEED, isFromAd를 true로 설정
-      reply.updateStatusToSUCCEED();
-      reply.updateIsFromAdToTrue();
+            // 다이어리 내용을 기반으로 메시지 생성
+            DequeuedMessage message = createImmediateReplyMessage(reply);
+//            log.info(message.toString());
 
-      // 답변 상태 저장
-      replyRepository.save(reply);
+            // RodyProcessorImpl을 직접 사용하여 content 업데이트
+            rodyProcessor.createReply(message);
+            // 명시적 엔티티 리프레시
+            entityManager.refresh(reply);
 
-    } catch (Exception e) {
-      throw new BusinessException(ErrorType.INTERNAL_SERVER_ERROR);
+            // 여기서 content가 업데이트 된 reply를 다시 조회
+            reply = replyRepository.findById(reply.getId());
+
+            // 답변 상태를 SUCCEED, isFromAd를 true로 설정
+            reply.updateStatusToSUCCEED();
+            reply.updateIsFromAdToTrue();
+
+            // 저장 - 명시적으로 저장
+            replyRepository.save(reply);
+
+            // 업데이트 후에 조회하여 로깅
+            Reply updatedReply = replyRepository.findById(reply.getId());
+//            log.info("Reply updated: {}, content: {}", updatedReply.getId(), updatedReply.getContent());
+
+        } catch (Exception e) {
+            log.error("Error processing immediate reply: ", e);
+            throw new BusinessException(ErrorType.INTERNAL_SERVER_ERROR);
+        }
     }
-  }
 
 
   /**
@@ -112,7 +128,7 @@ public class DiaryRetrievalService implements DiaryQueryUsecase {
             reply.getId(),
             reply.getUser().getId(),
             content,
-            reply.getVersion(),
+            -1,
             reply.getReplyType()
     );
   }

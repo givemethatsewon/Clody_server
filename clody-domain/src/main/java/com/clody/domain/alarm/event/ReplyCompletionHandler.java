@@ -6,6 +6,7 @@ import com.clody.domain.alarm.repository.AlarmRepository;
 import com.clody.domain.alarm.service.AlarmScheduler;
 import com.clody.domain.alarm.strategy.ScheduleAlarmTimeFactory;
 import com.clody.domain.alarm.strategy.ScheduleTimeStrategy;
+import com.clody.domain.reply.ReplyType;
 import com.clody.domain.reply.dto.CreationMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,14 @@ public class ReplyCompletionHandler {
     * 사용자가 알람 수신에 동의한 경우, 알림 스케줄에 등록
      */
     Alarm alarm = alarmRepository.findByUserId(event.userId());
+
+    // 추가: 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip (임시로 -1로 처리
+    if (event.type() == ReplyType.DYNAMIC && event.version() == -1) {
+        log.info("광고 답장의 경우 알림 스케줄 스킵: {}", event);
+        return;
+    }
+
+
     //TODO 트랜잭션 분리해야 합니다. 
     if(!alarm.checkUserAgreedForReplyAlarm()) return;
 
