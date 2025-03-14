@@ -68,4 +68,5 @@ public class UserAuthControllerImpl implements AuthController {
 //    final UserAuthResponse response = userApplicationService.simpleSignUp(request);
 //    return ResponseEntity.status(HttpStatus.CREATED)
 //            .body(ApiResponse.success(SuccessType.CREATED_SUCCESS, response));
+//  }
 }

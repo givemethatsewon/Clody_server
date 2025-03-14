@@ -73,10 +73,9 @@ public class DiaryControllerImpl  implements DiaryController{
   public ResponseEntity<ApiResponse<DiaryCreatedTimeResponse>> getDiaryCreatedTime(
       @RequestParam final int year,
       @RequestParam final int month,
-      @RequestParam final int date,
-      @RequestParam(required = false) final Boolean adWatched
+      @RequestParam final int date
   ) {
-    final DiaryCreatedTimeResponse response = diaryQueryUsecase.getCreatedTime(year, month, date, adWatched);
+    final DiaryCreatedTimeResponse response = diaryQueryUsecase.getCreatedTime(year, month, date);
     return ResponseEntity.status(HttpStatus.OK)
         .body(ApiResponse.success(SuccessType.OK_SUCCESS, response));
   }

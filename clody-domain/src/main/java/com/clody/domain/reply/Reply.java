@@ -147,12 +147,17 @@ public class Reply extends BaseEntity {
     return this.replyType == ReplyType.FIRST;
   }
 
-  public void updateStatusToSUCCEED() {
+  public void updateReplyProcessStatus(ReplyProcessStatus status) {
     this.replyInfo = replyInfo.update(this.replyInfo.getVersion(), ReplyProcessStatus.SUCCEED);
   }
 
-  public void updateIsFromAdToTrue() {
-    this.isFromAd = true;
+  public void updateIsFromAd(boolean isFromAd) {
+    this.isFromAd = isFromAd;
   }
+
+  public void updateVersion(Integer version) {
+    this.replyInfo = replyInfo.update(version, ReplyProcessStatus.SUCCEED);
+  }
+
 
 }
