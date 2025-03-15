@@ -70,7 +70,7 @@ public class ReplyAdService implements ReplyAdUsecase {
 //            reply.updateIsFromAd(true);
 
         // 저장 - 명시적으로 저장 -> dirdty check 활용하도록 변경
-//        replyRepositoryAdapter.save(reply);
+        replyRepositoryAdapter.save(reply);
 
         // 업데이트 후에 조회하여 로깅
 //        Reply updatedReply = replyRepositoryAdapter.findById(reply.getId());
@@ -113,13 +113,9 @@ public class ReplyAdService implements ReplyAdUsecase {
         // 해당 날짜의 Reply 조회
         Reply reply = replyRepositoryAdapter.findByUserIdAndDiaryCreatedDate(userId, diaryDate);
 
-        // 이미 답변이 있는 경우 처리하지 않음
-        if (reply.getContent() != null && reply.getReplyInfo().checkReadable()) {
-            return;
-        }
         reply.updateIsFromAd(true); // 답변 상태를 SUCCEED로 설정
         reply.updateVersion(-1);    // 광고 버전으로 설정(알림 가지 않도록 처리)
-
+        replyRepositoryAdapter.save(reply);
     }
 
 }
