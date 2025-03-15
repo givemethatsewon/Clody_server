@@ -59,6 +59,7 @@ public enum ErrorType {
   DUPLICATE_REPLY(HttpStatus.BAD_REQUEST.value(), "중복된 답장이 존재합니다."),
   USER_UPDATED_DIARY(HttpStatus.BAD_REQUEST.value(), "사용자가 수정한 일기입니다."),
   INVALID_REPLY_TYPE(HttpStatus.BAD_REQUEST.value(), "올바르지 않은 답장 타입입니다."),
+  REPLY_CONTENT_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Azure AI 응답이 지연되었습니다."),
   /*
     * 알람 관련 오류
    */

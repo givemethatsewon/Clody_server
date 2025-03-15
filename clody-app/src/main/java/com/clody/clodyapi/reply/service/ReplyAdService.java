@@ -1,22 +1,24 @@
 package com.clody.clodyapi.reply.service;
 
-import com.clody.clodyapi.diary.mapper.DiaryMapper;
 import com.clody.clodyapi.reply.controller.dto.ReplyAdRequest;
 import com.clody.clodyapi.reply.usecase.ReplyAdUsecase;
 import com.clody.domain.diary.dto.DiaryContent;
 import com.clody.domain.diary.dto.DiaryDateInfo;
-import com.clody.domain.diary.dto.response.DiaryCreatedInfo;
 import com.clody.domain.diary.service.DiaryQueryService;
 import com.clody.domain.reply.Reply;
 import com.clody.domain.reply.ReplyProcessStatus;
 import com.clody.domain.reply.dto.DequeuedMessage;
 import com.clody.domain.reply.service.RodyProcessor;
 import com.clody.infra.models.reply.repository.ReplyRepositoryAdapter;
+import com.clody.support.dto.type.ErrorType;
+import com.clody.support.exception.BusinessException;
 import com.clody.support.security.util.JwtUtil;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -32,6 +34,7 @@ public class ReplyAdService implements ReplyAdUsecase {
     private final DiaryQueryService diaryQueryService;
     private final RodyProcessor rodyProcessor;
     private final EntityManager entityManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 광고 시청 후 즉시 답변을 처리하는 메서드
@@ -110,12 +113,55 @@ public class ReplyAdService implements ReplyAdUsecase {
         LocalDate diaryDate = LocalDate.of(replyAdRequest.year(), replyAdRequest.month(), replyAdRequest.date());
         Long userId = JwtUtil.getLoginMemberId();
 
-        // 해당 날짜의 Reply 조회
-        Reply reply = replyRepositoryAdapter.findByUserIdAndDiaryCreatedDate(userId, diaryDate);
-
-        reply.updateIsFromAd(true); // 답변 상태를 SUCCEED로 설정
-        reply.updateVersion(-1);    // 광고 버전으로 설정(알림 가지 않도록 처리)
-        replyRepositoryAdapter.save(reply);
+        // 1. 우선 content 생성 여부를 트랜잭션 없이 확인
+        if (waitForContent(userId, diaryDate)) {
+            // 2. 성공 시에만 짧은 트랜잭션으로 상태 업데이트
+            Reply reply = replyRepositoryAdapter.findByUserIdAndDiaryCreatedDate(userId, diaryDate);
+            reply.updateIsFromAd(true);
+            reply.updateVersion(-1);
+            replyRepositoryAdapter.save(reply);
+        } else {
+            throw new BusinessException(ErrorType.REPLY_CONTENT_TIMEOUT);
+        }
     }
 
+    // 트랜잭션 없이 콘텐츠 생성 대기
+    private boolean waitForContent(Long userId, LocalDate diaryDate) {
+        int maxAttempts = 10;
+        int initialWaitMs = 500;
+        int maxWaitMs = 2000;
+        int currentWaitMs = initialWaitMs;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+                // 각 조회를 별도의 트랜잭션으로 수행
+                boolean hasContent = checkReplyContent(userId, diaryDate);
+                if (hasContent) {
+                    return true;
+                }
+
+                // 지수 백오프 방식으로 대기 시간 증가 (최대 2초까지)
+                Thread.sleep(Math.min(currentWaitMs, maxWaitMs));
+                currentWaitMs *= 1.5;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return false;
+    }
+
+
+    // 읽기 전용 트랜잭션으로 콘텐츠 확인만 수행
+    public boolean checkReplyContent(Long userId, LocalDate diaryDate) {
+        try {
+            Reply reply = replyRepositoryAdapter.findByUserIdAndDiaryCreatedDate(userId, diaryDate);
+            entityManager.refresh(reply);
+            return reply != null && reply.getContent() != null;
+        } catch (Exception e) {
+            log.warn("Failed to check reply content for user {} on date {}: {}",
+                    userId, diaryDate, e.getMessage());
+            return false;
+        }
+    }
 }
