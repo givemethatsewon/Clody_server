@@ -95,11 +95,18 @@ public class DiaryQueryService {
       // 1분
       // 12시간
       if (deletedDiaries.isEmpty() && reply != null && !reply.getReplyInfo().isDeleted() && !reply.getIs_read() && reply.getReplyInfo().getReplyProcessStatus().equals(ReplyProcessStatus.SUCCEED)) {
-        if(reply.getReplyType().equals(ReplyType.FIRST) && (LocalDateTime.now().isBefore(unDeletedDiaries.get(0).getCreatedAt().plusMinutes(1)))){
+        if(reply.getReplyType().equals(ReplyType.FIRST) && (LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusMinutes(1)))){
           replyStatus = UserReplyReadStatus.UNREADY;
-        } else if (reply.getReplyType().equals(ReplyType.DYNAMIC) && (LocalDateTime.now().isBefore(unDeletedDiaries.get(0).getCreatedAt().plusHours(12)))) {
+        } else if (reply.getReplyType().equals(ReplyType.DYNAMIC) && (LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusHours(12)))) {
           replyStatus = UserReplyReadStatus.UNREADY;
-        } else{
+        } else if (
+                !reply.getIsFromAd()
+                        && reply.getCreatedAt().toLocalDate().isEqual(reply.getDiaryCreatedDate().plusDays(1)) // 전날 일기일 때
+                        && LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusHours(36)) // 일기 작성 시간 부터 36시간 이내인지 체크(전날 일기는 전날 날짜 + 작성 시간으로 등록되어 있으므로)
+        ) {
+          // 전날 일기의 case
+          replyStatus = UserReplyReadStatus.UNREADY;
+        } else {
           // 일기 삭제한 적 없음 + 답장 있음 + 답장 안읽음 + 답장 상태 SUCCESS 임
           replyStatus = UserReplyReadStatus.READY_NOT_READ;
         }
@@ -182,9 +189,16 @@ public class DiaryQueryService {
 
       if (deletedDiaries.isEmpty() && reply != null && !reply.getReplyInfo().isDeleted() && !reply.getIs_read() && reply.getReplyInfo().getReplyProcessStatus().equals(ReplyProcessStatus.SUCCEED)) {
 
-        if(reply.getReplyType().equals(ReplyType.FIRST) && (LocalDateTime.now().isBefore(unDeletedDiaries.get(0).getCreatedAt().plusMinutes(1)))){
+        if(reply.getReplyType().equals(ReplyType.FIRST) && (LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusMinutes(1)))){
           replyStatus = UserReplyReadStatus.UNREADY;
-        } else if (reply.getReplyType().equals(ReplyType.DYNAMIC) && (LocalDateTime.now().isBefore(unDeletedDiaries.get(0).getCreatedAt().plusHours(12)))) {
+        } else if (reply.getReplyType().equals(ReplyType.DYNAMIC) && (LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusHours(12)))) {
+          replyStatus = UserReplyReadStatus.UNREADY;
+        } else if (
+                !reply.getIsFromAd()
+                        && reply.getCreatedAt().toLocalDate().isEqual(reply.getDiaryCreatedDate().plusDays(1)) // 전날 일기일 때
+                        && LocalDateTime.now().isBefore(unDeletedDiaries.getFirst().getCreatedAt().plusHours(36)) // 일기 작성 시간 부터 36시간 이내인지 체크(전날 일기는 전날 날짜 + 작성 시간으로 등록되어 있으므로)
+        ) {
+          // 전날 일기의 case
           replyStatus = UserReplyReadStatus.UNREADY;
         } else{
           // 일기 삭제한 적 없음 + 답장 있음 + 답장 안읽음 + 답장 상태 SUCCESS 임
