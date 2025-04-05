@@ -6,8 +6,10 @@ import com.clody.domain.alarm.repository.AlarmRepository;
 import com.clody.domain.alarm.service.AlarmScheduler;
 import com.clody.domain.alarm.strategy.ScheduleAlarmTimeFactory;
 import com.clody.domain.alarm.strategy.ScheduleTimeStrategy;
+import com.clody.domain.reply.Reply;
 import com.clody.domain.reply.ReplyType;
 import com.clody.domain.reply.dto.CreationMessage;
+import com.clody.domain.reply.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -21,6 +23,7 @@ public class ReplyCompletionHandler {
   private final AlarmRepository alarmRepository;
   private final ScheduleAlarmTimeFactory alarmTimeFactory;
   private final AlarmScheduler alarmScheduler;
+  private final ReplyRepository replyRepository;
 
   @EventListener
   public void handleReplyCompletion(CreationMessage event) {
@@ -29,8 +32,9 @@ public class ReplyCompletionHandler {
      */
     Alarm alarm = alarmRepository.findByUserId(event.userId());
 
-    // 추가: 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip (임시로 -1로 처리
-    if (event.type() == ReplyType.DYNAMIC && event.version() == -1) {
+    Reply reply = replyRepository.findByReplyId(event.replyId());
+    // 추가: 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip (임시로 -1로 처리)
+    if (reply.getVersion() == -1) {
         log.info("광고 답장의 경우 알림 스케줄 스킵: {}", event);
         return;
     }
