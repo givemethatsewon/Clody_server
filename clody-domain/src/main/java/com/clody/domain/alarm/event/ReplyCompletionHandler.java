@@ -37,8 +37,8 @@ public class ReplyCompletionHandler {
         log.warn("답변이 존재하지 않습니다. replyId: {}", event.replyId());
         return;
     }
-    // 추가: 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip (임시로 -1로 처리)
-    if (reply.getVersion() == -1) {
+    // 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip
+    if (Boolean.TRUE.equals(reply.getIsFromAd())) {
         log.info("광고 답장의 경우 알림 스케줄 스킵: {}", event);
         return;
     }
