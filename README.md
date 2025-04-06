@@ -24,7 +24,7 @@
 클로디는 감사일기를 작성하고 AI 로디가 답장을 해주는 서비스 입니다! 감사하는 마음을 통해 우리는 삶에서 더 많은 긍정적인 순간들을 발견하고,
 이를 통해 더 행복하고 행운이 따르는 삶을 살 수 있게 됩니다. 클로디가 행운의 친구가 되어 감사한 마음을 응원해드릴게요!
 
-## Contributors
+## Current Contributors
 <table>
   <tr>
     <td align="center"><img src="https://github.com/user-attachments/assets/6bbb2cfe-13c9-4c95-8caf-64205dc4cfce" width="250" /></td>
@@ -42,6 +42,23 @@
 
  
 </table>
+
+## Contributors
+ <table>
+   <tr>
+     <td align="center"><img src="https://github.com/user-attachments/assets/924f39bc-62c1-4ac6-8659-c01188b22564" width="250" /></td>
+     <td align="center"><img src="https://github.com/user-attachments/assets/e3b4a502-c735-41a6-afe9-2ddc1b4f4be9" width="250" /></td>
+   </tr>
+   <tr>
+     <td align="center"><a href="https://github.com/hyukjinKimm"> 김혁진</a></td>
+     <td align="center"><a href="https://github.com/Yangdaehan">양대한</a></td>
+   </tr>
+   <tr>
+    <td align="center">BE</td>
+    <td align="center">BE</td>
+  </tr>
+  
+ </table>
 
 <br>
 
