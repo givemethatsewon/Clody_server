@@ -33,7 +33,7 @@
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/hyunw9">강현욱</a></td>
-    <td align="center"><a href="https://github.com/Yangdaehan">민세원</a></td>
+    <td align="center"><a href="https://github.com/givemethatsewon">민세원</a></td>
   </tr>
 <tr>
   <td align="center">Maintainer, BE</td>
