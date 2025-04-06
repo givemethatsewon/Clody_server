@@ -38,7 +38,7 @@ public class ReplyCompletionHandler {
         return;
     }
     // 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip
-    if (Boolean.TRUE.equals(reply.getIsFromAd())) {
+    if (reply.getVersion() == -1 || Boolean.TRUE.equals(reply.getIsFromAd())) {
         log.info("광고 답장의 경우 알림 스케줄 스킵: {}", event);
         return;
     }

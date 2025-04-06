@@ -99,7 +99,7 @@ public class ReplyAdService implements ReplyAdUsecase {
                 reply.getId(),
                 reply.getUser().getId(),
                 content,
-                reply.getVersion(),
+                -1,
                 reply.getReplyType()
         );
     }
@@ -118,7 +118,6 @@ public class ReplyAdService implements ReplyAdUsecase {
             // 2. 성공 시에만 짧은 트랜잭션으로 상태 업데이트
             Reply reply = replyRepositoryAdapter.findByUserIdAndDiaryCreatedDate(userId, diaryDate);
             reply.updateIsFromAd(true);
-            reply.updateVersion(-1);
             replyRepositoryAdapter.save(reply);
         } else {
             throw new BusinessException(ErrorType.REPLY_CONTENT_TIMEOUT);
