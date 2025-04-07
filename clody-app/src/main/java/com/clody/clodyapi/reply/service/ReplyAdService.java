@@ -1,5 +1,14 @@
 package com.clody.clodyapi.reply.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.clody.clodyapi.reply.controller.dto.ReplyAdRequest;
 import com.clody.clodyapi.reply.usecase.ReplyAdUsecase;
 import com.clody.domain.diary.dto.DiaryContent;
@@ -13,18 +22,10 @@ import com.clody.infra.models.reply.repository.ReplyRepositoryAdapter;
 import com.clody.support.dto.type.ErrorType;
 import com.clody.support.exception.BusinessException;
 import com.clody.support.security.util.JwtUtil;
+
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -70,14 +71,11 @@ public class ReplyAdService implements ReplyAdUsecase {
 
         // 답변 상태를 SUCCEED로 설정
         reply.updateReplyProcessStatus(ReplyProcessStatus.SUCCEED);
-//            reply.updateIsFromAd(true);
+        reply.offPushNotification();
 
         // 저장 - 명시적으로 저장 -> dirdty check 활용하도록 변경
         replyRepositoryAdapter.save(reply);
 
-        // 업데이트 후에 조회하여 로깅
-//        Reply updatedReply = replyRepositoryAdapter.findById(reply.getId());
-//        log.info("Reply updated: {}, content: {}", updatedReply.getId(), updatedReply.getContent());
     }
 
 

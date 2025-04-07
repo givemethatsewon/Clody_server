@@ -2,10 +2,16 @@ package com.clody.domain.reply;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
+import java.time.LocalDate;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.clody.domain.base.BaseEntity;
 import com.clody.domain.user.User;
 import com.clody.support.dto.type.ErrorType;
 import com.clody.support.exception.BusinessException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -18,12 +24,9 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -159,5 +162,7 @@ public class Reply extends BaseEntity {
     this.replyInfo = replyInfo.update(version, ReplyProcessStatus.SUCCEED);
   }
 
-
+  public void offPushNotification() {
+    updateVersion(-1);
+  }
 }

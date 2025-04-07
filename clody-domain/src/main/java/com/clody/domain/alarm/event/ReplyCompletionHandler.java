@@ -1,5 +1,8 @@
 package com.clody.domain.alarm.event;
 
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
 import com.clody.domain.alarm.Alarm;
 import com.clody.domain.alarm.dto.ScheduleAlarmInfo;
 import com.clody.domain.alarm.repository.AlarmRepository;
@@ -7,13 +10,11 @@ import com.clody.domain.alarm.service.AlarmScheduler;
 import com.clody.domain.alarm.strategy.ScheduleAlarmTimeFactory;
 import com.clody.domain.alarm.strategy.ScheduleTimeStrategy;
 import com.clody.domain.reply.Reply;
-import com.clody.domain.reply.ReplyType;
 import com.clody.domain.reply.dto.CreationMessage;
 import com.clody.domain.reply.repository.ReplyRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -33,10 +34,7 @@ public class ReplyCompletionHandler {
     Alarm alarm = alarmRepository.findByUserId(event.userId());
 
     Reply reply = replyRepository.findByReplyId(event.replyId());
-    if (reply == null) {
-        log.warn("답변이 존재하지 않습니다. replyId: {}", event.replyId());
-        return;
-    }
+
     // 광고로 인한 즉시 답변의 경우 알림 스케줄 생성 skip
     if (reply.getVersion() == -1 || Boolean.TRUE.equals(reply.getIsFromAd())) {
         log.info("광고 답장의 경우 알림 스케줄 스킵: {}", event);
