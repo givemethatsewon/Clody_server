@@ -20,9 +20,11 @@ public class AlarmBroadcastService implements BroadCastAlarmUsecase {
 
     @Override
     public boolean broadCastAlarm(String title, String body) {
-        List<Alarm> alarmList = alarmRepository.findAllAlarm().stream()
-                                               .filter(alarm -> alarm.isDiaryAlarm())
-                                               .toList();
+        List<String> tokenList = alarmRepository.findAllAlarm().stream()
+                                                .filter(alarm -> alarm.isDiaryAlarm())
+                                                .map(Alarm::getFcmToken)
+                                                .toList();
+        alarmPublisher.broadcastAlarm(tokenList, title, body);
         return true;
     }
 }
