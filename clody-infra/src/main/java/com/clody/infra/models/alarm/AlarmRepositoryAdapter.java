@@ -1,16 +1,18 @@
 package com.clody.infra.models.alarm;
 
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.clody.domain.alarm.Alarm;
 import com.clody.domain.alarm.repository.AlarmRepository;
 import com.clody.domain.user.User;
 import com.clody.infra.config.TransactionManagerConfig;
 import com.clody.support.dto.type.ErrorType;
 import com.clody.support.exception.NotFoundException;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AlarmRepositoryAdapter implements AlarmRepository {
@@ -47,5 +49,10 @@ public class AlarmRepositoryAdapter implements AlarmRepository {
   @Override
   public Optional<Alarm> findUserAgreedForReply(Long userId) {
     return alarmRepository.findByUserIdAndIsReplyAlarmTrue(userId);
+  }
+
+  @Override
+  public List<Alarm> findAllAlarm() {
+    return alarmRepository.findAll();
   }
 }

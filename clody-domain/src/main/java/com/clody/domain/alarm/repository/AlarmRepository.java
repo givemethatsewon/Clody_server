@@ -1,10 +1,11 @@
 package com.clody.domain.alarm.repository;
 
-import com.clody.domain.alarm.Alarm;
-import com.clody.domain.user.User;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+
+import com.clody.domain.alarm.Alarm;
+import com.clody.domain.user.User;
 
 public interface AlarmRepository {
 
@@ -17,4 +18,6 @@ public interface AlarmRepository {
   Optional<Alarm> findUserAgreedForReply(Long userId);
 
   Alarm save(Alarm alarm);
+
+  List<Alarm> findAllAlarm();
 }
