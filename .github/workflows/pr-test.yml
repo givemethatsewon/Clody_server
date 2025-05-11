@@ -42,10 +42,18 @@ jobs:
         id: changed_modules
         shell: bash
         run: |
-          # git diff 대상이 origin/prod 인지, HEAD~1 인지 확인
-          BASE_REF=$(jq -r '.pull_request.base.sha' "$GITHUB_EVENT_PATH")
-          MODULES=$(git diff --name-only "$BASE_REF"...HEAD | cut -d'/' -f1 | sort -u)
-          echo "modules=$MODULES" | tee -a $GITHUB_OUTPUT
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
+          git fetch origin "$BASE_REF" --depth=1
+      
+          MODULES=""
+          for dir in $(git diff --name-only "$BASE_REF"...HEAD | cut -d'/' -f1 | sort -u); do
+            if [[ -f "$dir/build.gradle" || -f "$dir/build.gradle.kts" ]]; then
+              MODULES="$MODULES $dir"
+            fi
+          done
+
+          MODULES=$(echo "$MODULES" | xargs)   
+          echo "modules=$MODULES" >> "$GITHUB_OUTPUT"
 
       - name: Run tests on changed modules
         if: steps.changed_modules.outputs.modules != ''
