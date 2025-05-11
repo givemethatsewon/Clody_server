@@ -79,14 +79,16 @@ jobs:
 
       - name: Discord success
         if: success()
-        uses: Ilshidur/action-discord@v2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: ":white_check_mark: *${{ github.workflow }}* #${{ github.run_number }} succeeded in ${{ github.run_duration }}s."
+          args: ':white_check_mark: *${{ github.workflow }}* #${{ github.run_number }} succeeded in ${{ github.run_duration }}s.'
 
       - name: Discord failure
         if: failure()
-        uses: Ilshidur/action-discord@v2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: ":x: *${{ github.workflow }}* #${{ github.run_number }} failed."
+          args: ':x: *${{ github.workflow }}* #${{ github.run_number }} failed.' 
